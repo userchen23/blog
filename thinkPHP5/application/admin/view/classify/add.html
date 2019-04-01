@@ -1,0 +1,29 @@
+{include file="public/header" /}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">新增类别</h1>
+    <div class="table-responsive">
+        <form action="{:url('classify/save')}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="exampleInputEmail1">分类名：</label>
+                <input type="text" name="cname" class="form-control">
+            </div>
+
+            <div  class="form-group">
+                <label for="exampleInputEmail1">父分类：</label>
+                <select class="form-control" name='pid'>
+                {volist name='clists' id='vo'}
+                    <option value='{$vo.id}'>{$vo.cname}</option>
+                    {volist name="vo['child']" id ="co"}
+                    <option value='{$co.id}'>|--{$co.cname}</option>
+
+                    {/volist}
+                    {/volist}
+                </select>
+            </div>
+            
+            <input type="submit" name="" value="提交" class="btn btn-default">
+        </form>
+    </div>
+</div>
+
+{include file="public/footer" /}

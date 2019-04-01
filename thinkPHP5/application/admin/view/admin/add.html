@@ -1,0 +1,19 @@
+{include file="public/header" /}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">新增留言</h1>
+    <div class="table-responsive">
+        <form action="{:url('admin/save')}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="exampleInputEmail1">用户：</label>
+                <input type="text" name="username" class="form-control">
+            </div>
+            <div  class="form-group">
+                <label for="exampleInputFile">留言</label>    
+                <textarea class="form-control" rows="3" name="content"></textarea>
+            </div>
+            <input type="submit" name="" value="留言" class="btn btn-default">
+        </form>
+    </div>
+</div>
+
+{include file="public/footer" /}
