@@ -10,25 +10,15 @@ class User extends Base
 {
   public $table ='user';
 
-  public function getUser(){
-    $result=Db::table('user')->select();
-    $umsg = [];
-    $umsg=get_key_value($result,'id');
-    
-    return $umsg;
-  }
-
-
-
   public function findByPhone($phone){//
       
-    $info=Db::table('user')->where('phone',$phone)->find();
+    $info=$this->where('phone',$phone)->find();
     return $info;
       
   }
 
   public function register($data){
-    $result = Db::table('user')->insert($data);
+    $result = $this->insert($data);
     return $result;
   }
 }

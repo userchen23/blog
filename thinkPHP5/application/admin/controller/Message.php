@@ -17,12 +17,17 @@ class Message extends Controller
         $msgLists = $objForMsg->getLists();
         
         $objForUser = new UserModel;
-        $umsg = $objForUser->getUser();
-        
+        $umsg = $objForUser->changeLists();
+
+        $objForClsf = new ClsfModel;
+        $cmsg = $objForClsf->changeLists();
+       
         
         foreach ($msgLists as $key => $value) {
             $msgLists[$key]['username']=$umsg[$value['userid']]['username'];
+            $msgLists[$key]['cname']=$cmsg[$value['cid']]['cname'];
         }
+        
         $data = $msgLists;
         
         $this->assign('mlist',$data);
@@ -38,7 +43,6 @@ class Message extends Controller
             $obj = new ClsfModel;
             $data = $obj->getLists();
             $result = $obj->arrChange($data,0,3);
-            
             $this->assign('clists',$result);
         return $this->fetch('add');
     }
@@ -119,7 +123,7 @@ class Message extends Controller
             }
             
         
-            $msgid = $data['msgid'];
+            $msgid = $data['id'];
             $data=[
                 
                 'cid'=>$data['cid'],
@@ -155,7 +159,7 @@ class Message extends Controller
             //     die();
             // }
             
-            $msgid = $data['msgid'];
+            $msgid = $data['id'];
             
 
             $obj = new MsgModel;

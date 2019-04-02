@@ -1,6 +1,6 @@
 {include file="public/header" /}
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <h1 class="page-header">留言板</h1>
+    <h1 class="page-header">分类表</h1>
   <div class="table-responsive">
 <div>
     <a  class="btn btn-default" href="{:url('classify/add')}">新增</a>
@@ -14,9 +14,6 @@
         <td>cid</td>
         <td>cname</td>
         <td>pid</td>
-
-        
-        <td>handle</td>
     </tr>
  
     <tr>
@@ -24,12 +21,6 @@
         <td>{$vo.id}</td>
         <td>{$vo.cname}</td>
         <td>{$vo.pid}</td>
-
-        
-        <td>
-            <a href="{:url('classify/update')}?id={$vo.id}">修改</a>
-            <a href="{:url('classify/delete')}?id={$vo.id}">删除</a>
-        </td>
     </tr>
     {/volist}
     

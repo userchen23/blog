@@ -5,31 +5,45 @@ use think\Db;
 use think\Model;
 
 
+
 /**
  * 
  */
 class Base extends Model
 {
-    public $table  ='message';
+    
 
     public function add($data){
-        return $result = Db::table($this->table)->insert($data);
+        $result = $this->insert($data);
+
+        return $result;
     }
 
     public function getInfo($id){
-        $info = Db::table($this->table)->where('id',$id)->find();
+        $info = $this->where('id',$id)->find();
         return $info;
     }
 
     public function getLists(){
-        return Db::table($this->table)->select();
+        $lists = $this->select();
+        return $lists;
     }
+
+    public function changeLists(){
+        $result= $this->select();
+        
+        $umsg=get_key_value($result,'id');
+        return $umsg;
+      }
     
     public function doupdate($id,$data){
-        return $result = Db::table($this->table)->where('id', $id)->update($data);
+
+        $result = $this->where('id', $id)->update($data);
+        return $result;
     }
 
     public function dodelete($id){
-        return $result = Db::table($this->table)->where('id',$id)->delete();
+        $result = $this->where('id',$id)->delete();
+        return $result;
     }
 }

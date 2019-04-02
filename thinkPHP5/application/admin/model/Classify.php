@@ -14,6 +14,7 @@ class Classify extends Base
 
     public function arrChange($DATA,$PID=0,$END_DEEP=2,$NOW_DEEP=1){
         $TREE = [];
+
         foreach ($DATA as $key => $value) {
             if ($value['pid']==$PID) {
                 if ($END_DEEP>$NOW_DEEP) {
@@ -24,6 +25,7 @@ class Classify extends Base
                 $TREE[]=$value;
             }
         }
+        
         return $TREE;
     }
     

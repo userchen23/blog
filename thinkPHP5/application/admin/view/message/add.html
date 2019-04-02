@@ -9,11 +9,11 @@
                     <select class="form-control" name='cid'>
                     <option value="0">请选择</option>
                         {volist name="clists" id='vo'}
-                        <option disabled="disabled" value='{$vo.cid}'>{$vo.cname}</option>
+                        <option disabled="disabled" value='{$vo.id}'>{$vo.cname}</option>
                             {volist name="$vo['child']" id='vs'}
-                            <option disabled="disabled" value='{$vs.cid}'>|--{$vs.cname}</option>
+                            <option disabled="disabled" value='{$vs.id}'>|--{$vs.cname}</option>
                                 {volist name="$vs['child']" id='vt'}
-                                <option value='{$vt.cid}'>|----{$vt.cname}</option>
+                                <option value='{$vt.id}'>|----{$vt.cname}</option>
                                 {/volist}
                             {/volist}
                         {/volist}
