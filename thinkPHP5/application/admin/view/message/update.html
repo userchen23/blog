@@ -5,7 +5,7 @@
         <form action="{:url('message/doupdate')}" method="post" enctype="multipart/form-data">
 
             <div  class="form-group">
-                <label for="exampleInputEmail1">分类：</label>
+                <label for="exampleInputFile">分类：</label>
                     <select class="form-control" name='cid'>
                     <option value="0">请选择</option>
                         {volist name="clists" id='vo'}
@@ -19,10 +19,21 @@
                         {/volist}
                     </select>
             </div>
+
             
+
             <div  class="form-group">
-                <label for="exampleInputFile">留言</label>    
-                <textarea class="form-control" rows="3" name="content">{$msg}</textarea>
+                
+                <input type="file" name="image" /> <br>
+                {if condition="$msg['img'] neq ''"}
+                    <h3>原图片</h3>
+                    <img src="/thinkPHP5/public/{$msg.img}" width="100">
+                {else /} 无图片
+                {/if}<br>
+                <label for="exampleInputFile">留言</label> 
+
+                <textarea class="form-control" rows="3" name="content">{$msg.content}</textarea>
+                
             </div>
             <div class="form-group">
 

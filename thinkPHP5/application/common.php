@@ -17,3 +17,12 @@ function get_key_value($result,$field){
     }
     return $data;
 }
+
+function lists_to_array($lists){
+    $result=[];
+    foreach ($lists as $key => $value) {
+        $result[]=$value->toArray();
+    }
+    return $result;
+}
+

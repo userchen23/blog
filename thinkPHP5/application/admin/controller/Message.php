@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use think\Controller;
+use app\admin\model\Base;
 use app\admin\model\Message as MsgModel;
 use app\admin\model\User as UserModel;
 use app\admin\model\Classify as ClsfModel;
@@ -12,7 +13,7 @@ class Message extends Controller
 {
 
     public function mlists(){
-
+        
         $objForMsg = new MsgModel;
         $msgLists = $objForMsg->getLists();
         
@@ -53,29 +54,45 @@ class Message extends Controller
                 die();
             }
         if (request()->isPost()) {
+
             $data=input('post.');
-            
-            
-            $userid = session('id');
-            
-            $end=[
-                'userid'=>$userid,
-                'cid'=>$data['cid'],
-                'content'=>$data['content'],];
-            
 
-            $obj = new MsgModel;
-            $result = $obj->add($end);
+            $code=$data['code'];
+            $cap = '';
 
-            if ($result) {
-                $this->success('添加成功', 'Message/mlists');
-                die();
+            $cap=$this->validate($code,[
+                'captcha|验证码'=>'require|captcha'
+            ]);
+            if ($cap) {
+                $userid = session('id');
+                
+                $end=[
+                    'userid'=>$userid,
+                    'cid'=>$data['cid'],
+                    'content'=>$data['content'],
+                    
+                ];
+                if ($img=\tool\FileHandle::upload()) {
+                    $end['img']=$img;
+                    
+                }
+
+                $obj = new MsgModel;
+                $result = $obj->add($end);
+
+                if ($result) {
+                    $this->success('添加成功', 'Message/mlists');
+                    die();
+                }else{
+                    $this->error('添加失败', 'Message/mlists');
+                    die();
+                }
+
             }else{
-                $this->error('添加失败', 'Message/mlists');
-                die();
+                $this->error('验证码错误','Message/mlists');
             }
-
         }
+
 
     }
 
@@ -84,8 +101,7 @@ class Message extends Controller
             $this->error('请登录', 'User/login');
             die();
         }
-        
-        
+             
         if (request()->isGet()) {
             $data=input('get.');
 
@@ -102,7 +118,7 @@ class Message extends Controller
             
             $objForMsg = new MsgModel;
             $msg=$objForMsg->getInfo($data['id']);
-            $this->assign('msg',$msg['content']);
+            $this->assign('msg',$msg);
 
             return $this->fetch('update');
         }
@@ -122,13 +138,16 @@ class Message extends Controller
                 die();
             }
             
-        
+            
+            $img=\tool\FileHandle::upload();
             $msgid = $data['id'];
             $data=[
                 
                 'cid'=>$data['cid'],
-                'content'=>$data['content'],];
-            
+                'content'=>$data['content'],
+                'img'=>$img['saveName'],
+            ];
+                
 
             $obj = new MsgModel;
             $result = $obj->doupdate($msgid,$data);
