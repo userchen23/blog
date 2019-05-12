@@ -16,6 +16,7 @@ class User extends Base
     return $info;
       
   }
+
   public function setToken(){
     //todo 存token
     

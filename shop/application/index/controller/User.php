@@ -37,7 +37,7 @@ class User extends Controller
         return json_encode($result);
     }
 
-    public function getUserMsg($token){
+    public function info(){
         $error = 0;
         $msg = '成功';
         $data = [];
@@ -53,7 +53,14 @@ class User extends Controller
                     $error = 2;
                     $msg = 'token不存在或过期';
                 }else{
-                    $data = $result;
+                    $info = [
+                        "id"=>!empty($result['id'])?$result['id']:'',
+                        "username"=>!empty($result['username'])?$result['username']:'',
+                        "phone"=>!empty($result['phone'])?$result['phone']:'',
+                    ];
+                    $data = [
+                        "info"=>$info,
+                    ];
                 }
             }
         }else{
@@ -67,7 +74,7 @@ class User extends Controller
         return json_encode($result);
     }
 
-    public function login(){
+    public function doLogin(){
         $error = 0;
         $msg = '成功';
         $data = [];
@@ -187,29 +194,42 @@ class User extends Controller
 
         return $this->fetch('User/register');
     }
-    public function doReg(){
-        if(request()->isPost()){
-            $data = input('post.');
+    public function reg(){
+        $error = 0;
+        $msg = '成功';
+        $data = [];
+        if (request()->isPost()) {
+            $postdata = input('post.');
+            if (empty($postdata)) {
+                $error = 2;
+                $msg = 'data为空';
+            }else{
+                if (empty($postdata['username'])||empty($postdata['phone'])||empty($postdata['password'])) {
+                    $error = 3;
+                    $msg = "用户名、电话、密码不能为空";
+                }else{
+                    $postdata2 = [
+                        "username" =>$postdata['username'],
+                        "phone"=>$postdata['phone'],
+                        "password"=>$postdata['password'],
+                    ];
+                    $userobj = new Usermodel;
+                    $info = $userobj->findByPhone($postdata2['phone']);
+                    if(!empty($info)) {
+                        $error = 4;
+                        $msg = "电话已被注册";
+                    }else{
 
-            $obj = new Usermodel;
-            $info = $obj->findByPhone($data['phone']);
-                        
-            if ($info['phone'] == $data['phone']) {
- 
-                $this->error('该手机号已存在', 'User/register');
-                die();
-            }
-
-            $result=$obj->register($data);
-
-            if($result) {
-                $this->success('注册成功', 'User/login');
-
-                die();
-            } else{
-                $this->error('注册失败', 'User/register');
-                die();
-            }
+                        $result =$userobj-> register($postdata2);
+                        $msg ="注册成功";
+                    }
+                }
+            }  
+        }else{
+            $error=1;
+            $msg = '未接受到POST请求';
         }
+        $result = response($error,$msg,$data);
+        return json_encode($result);
     }
 }

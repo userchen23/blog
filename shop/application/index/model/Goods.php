@@ -51,7 +51,7 @@ class Goods extends Base
             'img'=>"http://www.shop.com/".$info['img'],
             'title'=>$info['name'],
             'desc'=>$info['pro'],
-            'price'=>$info['price'],
+            'price'=>$info['price']/100,
             'tag'=>$info['tag'],
             'content'=>htmlspecialchars_decode($info['content']),
         ];

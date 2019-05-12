@@ -2,7 +2,7 @@
 namespace app\index\model;
 
 use app\index\model\Base;
-
+use app\index\model\User as UserModel;
 /**
  * 
  */
@@ -37,9 +37,12 @@ class Token extends Base
     public function tokenChecked($token,$param = null){
 
         $info = self::getinfo('token',$token);
+
         if($info){
             if ($param) {
                 $result = unserialize($info['value']);
+                $userobj=new UserModel;
+                $result = $userobj->getinfo('id',$result['id']);
             }else{
                 $now_time =time();
                 if ($now_time < $info['time']) {
