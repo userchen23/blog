@@ -17,10 +17,22 @@ class Base extends Model
         return $result;
     }
 
+    public function updateField($field1,$info,$field2,$data){
+        $result=$this->where($field1,$info)->setField($field2, $data);
+        return $result;
+    }
+
     public function getInfo($field,$value){
         $info = $this->where($field,$value)->find();
         if ($info) {
             $info = $info->toArray();
+        }
+        return $info;
+    }
+    public function selectInfo($field,$value){
+        $info =$this->where($field,$value)->select();
+        if ($info) {
+            $info = lists_to_array($info);
         }
         return $info;
     }

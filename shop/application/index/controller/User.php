@@ -23,7 +23,7 @@ class User extends Controller
             }else{
                 $tokenobj = new UserToken;
                 $result = $tokenobj->tokenChecked($token);
-                if ($result===0) {
+                if (!$result) {
                     $error = 3;
                     $msg = 'token不存在或过期';
                 }
@@ -33,7 +33,7 @@ class User extends Controller
             $msg = '未接受到POST请求';
         }
 
-        $result = response($error,$msg,$data);
+        $result = response($error, $msg, $data);
         return json_encode($result);
     }
 
@@ -41,37 +41,37 @@ class User extends Controller
         $error = 0;
         $msg = '成功';
         $data = [];
-        if (request()->isPost()) {
-            $token = input('post.token');
-            if (empty($token)) {
-                $error = 1;
-                $msg = 'tonken为空';
-            }else{
-                $tokenobj = new UserToken;
-                $result = $tokenobj->tokenChecked($token,1);
-                if ($result===0) {
-                    $error = 2;
-                    $msg = 'token不存在或过期';
-                }else{
-                    $info = [
-                        "id"=>!empty($result['id'])?$result['id']:'',
-                        "username"=>!empty($result['username'])?$result['username']:'',
-                        "phone"=>!empty($result['phone'])?$result['phone']:'',
-                    ];
-                    $data = [
-                        "info"=>$info,
-                    ];
-                }
-            }
-        }else{
-            $error=1;
-            $msg = '未接受到POST请求';
+
+        $token = input('token');
+
+        if (empty($token)) {
+            $error = 1;
+            $msg = 'tonken为空';
+            $result = response($error, $msg, $data);
+            return json_encode($result);die();
         }
 
+        $tokenobj = new UserToken;
+        $result = $tokenobj->tokenChecked($token);
 
-        $result = response($error,$msg,$data);
+        if (!$result) {
+            $error = 2;
+            $msg = 'token不存在或过期';
+            $result = response($error,$msg,$data);
+            return json_encode($result);die();
+        }
 
-        return json_encode($result);
+        $info = [
+            "id"=>!empty($result['id'])?$result['id']:'',
+            "username"=>!empty($result['username'])?$result['username']:'',
+            "phone"=>!empty($result['phone'])?$result['phone']:'',
+        ];
+        $data = [
+            "info"=>$info,
+        ];
+
+        $result = response($error, $msg, $data);
+        return json_encode($result);die();
     }
 
     public function doLogin(){
@@ -87,21 +87,17 @@ class User extends Controller
                 $error = 2;
                 $msg = "用户不存在";
             }else{
-                //密码匹配
                 if ($info['password'] == $data['password']) {
                     $data = [
                         "name"=>$info['username'],
                         "id"=>$info['id'],
                     ];
-                    //todo//存token
-                    //1:调用getToken函数,token接
                     $tokenobj= new UserToken;
                     $token =$tokenobj-> getToken($data);
                     if ($token === 0) {
                         $error=4;
                         $msg = "token存入失败";
                     }
-                    //2:token存入data
                     $data = [];
                     $data['token'] = $token;
                 }else{
@@ -139,61 +135,10 @@ class User extends Controller
             $error=1;
             $msg = '未接受到POST请求';
         }
-
-
         $result = response($error,$msg,$data);
         return json_encode($result);
     }
 
-    public function loginv2(){
-        $error = 0;
-        $msg = '成功';
-        $data = [];
-        if(request()->isPost()){
-            $data = input('post.');
-            $obj = new Usermodel;
-            $info = $obj->findByPhone($data['phone']);
-
-            if(empty($info)) {
-                $error = 2;
-                $msg = "用户不存在";
-            }else{
-                //密码匹配
-                if ($info['password'] == $data['password']) {
-                    $data = [
-                        "name"=>$info['username'],
-                        "id"=>$info['id'],
-                    ];
-                    //todo//存token
-                    //1:调用getToken函数,token接
-                    $tokenobj= new Redismodel;
-                    $token =$tokenobj-> getToken($data);
-                    if ($token === 0) {
-                        $error=4;
-                        $msg = "token存入失败";
-                    }
-                    //2:token存入data
-                    $data = [];
-                    $data['token'] = $token;
-                }else{
-                    $error = 3;
-                    $msg = "密码错误";
-                }           
-            }          
-        }else{
-                $error = 1;
-                $msg = "未接受到POST请求";
-        }
-
-        $result=response($error,$msg,$data);
-        return json_encode($result);
-    }
-
-
-    public function register(){
-
-        return $this->fetch('User/register');
-    }
     public function reg(){
         $error = 0;
         $msg = '成功';
@@ -219,7 +164,6 @@ class User extends Controller
                         $error = 4;
                         $msg = "电话已被注册";
                     }else{
-
                         $result =$userobj-> register($postdata2);
                         $msg ="注册成功";
                     }

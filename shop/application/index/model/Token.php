@@ -34,28 +34,26 @@ class Token extends Base
         return 'user_token_'.md5($time. $user);
     }
 
-    public function tokenChecked($token,$param = null){
+    public function tokenChecked($token){
 
         $info = self::getinfo('token',$token);
 
-        if($info){
-            if ($param) {
-                $result = unserialize($info['value']);
-                $userobj=new UserModel;
-                $result = $userobj->getinfo('id',$result['id']);
-            }else{
-                $now_time =time();
-                if ($now_time < $info['time']) {
-                    $result = 1;
-                }else{
-                    $result =0;
-                }
-            }
-        }else{
-            $result = 0;
+        if(!$info){
+            $result = false;
+            return $result;die();
         }
+        $now_time =time();
+        if ($now_time > $info['time']) {
+            $result = false;
+            return $result;die();
+        }
+        $result = $info;
+        $result= unserialize($info['value']);
+        $userobj=new UserModel;
+        $result= $userobj->getinfo('id',$result['id']);
         return $result;
     }
+
     public function tokenClear($token){
         $result = self::doDelete('token',$token);
         return $result;

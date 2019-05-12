@@ -53,6 +53,7 @@ class Goods extends Base
             'desc'=>$info['pro'],
             'price'=>$info['price']/100,
             'tag'=>$info['tag'],
+            'attr'=>$info['attr'],
             'content'=>htmlspecialchars_decode($info['content']),
         ];
         return $tmp;
@@ -73,7 +74,6 @@ class Goods extends Base
             ];
             $result[] = $tmp;
         }
-        
         return $result;
     }
 
