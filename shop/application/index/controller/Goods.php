@@ -214,7 +214,7 @@ class Goods extends Controller
         $result = sendJson($error,$msg,$data);
         return $result;
     }
-    public function cartdec(){
+    public function cartDec(){
         $error = 0;
         $msg = '成功';
         $data = [];
