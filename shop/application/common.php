@@ -35,4 +35,12 @@ function response($error=0,$msg='成功',$data=[]){
     return $result;
 }
 
+function sendJson($error = 0, $msg = '成功', $data = []){
+    $result = [
+        'error'=>$error,
+        'msg'=>$msg,
+        'data'=>$data,
+    ];
+    return json_encode($result);
+}
 

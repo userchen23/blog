@@ -29,9 +29,8 @@ class Goods extends Controller
         $endbanner = $bannerobj->formatBanner($bannerlist);
         $data['banner']=$endbanner;
 
-
-        $result=response($error,$msg,$data);     
-        return json_encode($result);die();
+        $result = sendJson($error,$msg,$data);
+        return $result;die(); 
     }
 
     public function detail($id){
@@ -41,34 +40,32 @@ class Goods extends Controller
         if (empty($id)) {
             $error = 1;
             $msg = "未传递参数ID";
-            
+        $result = sendJson($error,$msg,$data);
+        return $result;die();           
+        }
+        $goodobj = new GoodsModel;
+        $goodinfo =$goodobj->getinfo('id',$id);
+        $goodinfo =$goodobj->changeinfo($goodinfo);
+        //设置attr
+        $attrobj = new AttrModel;
+        $attrlists = $attrobj->selectInfo('goodsid',$id);
+        if ($attrlists) {
+            $endattr = $attrobj->formatAttr($attrlists);
         }else{
-            $goodobj = new GoodsModel;
-            $goodinfo =$goodobj->getinfo('id',$id);
-            $goodinfo =$goodobj->changeinfo($goodinfo);
-            //设置attr
-            $attrobj = new AttrModel;
-            $attrlists = $attrobj->selectInfo('goodsid',$id);
-            if ($attrlists) {
-                $endattr = $attrobj->formatAttr($attrlists);
-            }else{
-                $endattr = [];
-            }
-            $goodinfo['attr'] = $endattr;
+            $endattr = [];
+        }
+        $goodinfo['attr'] = $endattr;
 
-            if (empty($goodinfo)) {
-                $error = 2;
-                $msg = "未查找到相关物品";
-            }else{
-                $endgoods = $goodobj->formatGood($goodinfo,"detail");
-                $data['info']=$endgoods;
-            }
-            
+        if (empty($goodinfo)) {
+            $error = 2;
+            $msg = "未查找到相关物品";
+        }else{
+            $endgoods = $goodobj->formatGood($goodinfo,"detail");
+            $data['info']=$endgoods;
         }
         
-        $result=response($error,$msg,$data);
-
-        return json_encode($result);die();
+        $result = sendJson($error,$msg,$data);
+        return $result;die();
     }
 
 
@@ -79,21 +76,21 @@ class Goods extends Controller
         if (!request()->isPost()) {
             $error=1;
             $msg = '未接受到POST请求';
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
         $postdata = input('post.');
         if (empty($postdata)) {
             $error = 2;
             $msg = 'data为空';
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
         if (empty($postdata['goods_id'])||empty($postdata['token'])||empty($postdata['count'])) {
             $error = 3;
             $msg = "缺少必要参数";
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result; die();
         }
 
         //获取userid
@@ -103,8 +100,8 @@ class Goods extends Controller
         if (!$result) {
             $error = 4;
             $msg = 'token不存在或过期';
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
         $userid = $result['id'];
 
@@ -115,8 +112,8 @@ class Goods extends Controller
         if (!$info) {
             $error = 5;
             $msg = "未找到商品";
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result; die();
         }
         //获取price
         $price = $info['price']/100;
@@ -129,18 +126,21 @@ class Goods extends Controller
         //判断是否重复
         $cartobj = new CartModel;
         $cartlists = $cartobj->selectInfo('goodsid',$goodsid);
-        if($cartlists){
+        if(!empty($cartlists)){
             foreach ($cartlists as $key => $value) {
                 if ($value['attrid']==$attrid) {
                     $count = $value['count'] +$count;
                     $result = $cartobj->updateField('id',$value['id'],'count',$count);
                 }
-                if (!$count) {
+
+                if (!$result) {
                     $error = 7;
                     $msg ='增加失败';
-                    $result = response($error,$msg,$data);
-                    return json_encode($result); die(); 
+                    $result = sendJson($error,$msg,$data);
+                    return $result;die();
                 }
+                $result = sendJson($error,$msg,$data);
+                return $result;die();
             }
         }
         $endcart=[
@@ -157,11 +157,11 @@ class Goods extends Controller
         if (!$result) {
             $error = 6;
             $msg ='添加失败';
-            $result = response($error,$msg,$data);
-            return json_encode($result);
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
-        $result = response($error,$msg,$data);
-        return json_encode($result);  
+        $result = sendJson($error,$msg,$data);
+        return $result; 
     }
 
     public function cartInfo(){
@@ -171,24 +171,24 @@ class Goods extends Controller
         if (!request()->isPost()) {
             $error=1;
             $msg = '未接受到POST请求';
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
         $token =input('post.token');
         if (empty($token)) {
             $error = 2;
             $msg = 'token为空';
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
-        //判断token
+        //判断token,获取用户id
         $tokenobj = new TokenModel;
         $result = $tokenobj->tokenChecked($token);
         if (!$result) {
             $error = 4;
             $msg = 'token不存在或过期';
-            $result = response($error,$msg,$data);
-            return json_encode($result); 
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
         }
         $userid = $result['id'];
 //获取列表，返回数据
@@ -211,7 +211,75 @@ class Goods extends Controller
         }
         $data['cart'] =$cart;
 
-        $result = response($error,$msg,$data);
-        return json_encode($result); 
+        $result = sendJson($error,$msg,$data);
+        return $result;
+    }
+    public function cartdec(){
+        $error = 0;
+        $msg = '成功';
+        $data = [];
+        if (!request()->isPost()) {
+            $error=1;
+            $msg = '未接受到POST请求';
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
+        }
+
+        $postdata = input('post.');
+
+        if (empty($postdata['goods_id'])||empty($postdata['token'])) {
+            $error = 2;
+            $msg = "缺少必要参数";
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
+        }
+
+        $token =$postdata['token'];
+        //判断token
+        $tokenobj = new TokenModel;
+        $result = $tokenobj->tokenChecked($token);
+        if (!$result) {
+            $error = 3;
+            $msg = 'token不存在或过期';
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
+        }
+        $userid = $result['id']; 
+        //post中物品id,属性id,count
+        $goodsid = $postdata['goods_id'];
+        $attrid  = !empty($postdata['attrid'])?$postdata['attrid']:'';
+        $count   = !empty($postdata['count']) ?$postdata['count']:1;
+        $cartobj = new CartModel;
+        $usercart = $cartobj->selectInfo('userid',$userid);
+        foreach ($usercart as $key => $value) {
+            if ($value['goodsid'] ==$goodsid && $value['attrid']==$attrid&&$value['count']>=$count) {
+                $tmpcount = 0;
+                $tmpcount = $value['count'] - $count;
+                if ($tmpcount===0) {
+                    $result = $cartobj->dodelete('id',$value['id']);
+                }else{
+                    if ($tmpcount>0) {
+                        $result = $cartobj->updateField('id',$value['id'],'count',$tmpcount);
+                    }else{
+                        $error = 4;
+                        $msg = '删除数量小于原有数量';
+                        $result = sendJson($error,$msg,$data);
+                        return $result;die();
+                    }
+                }
+                if (!$result) {
+                    $error = 5;
+                    $msg ='删除失败';
+                    $result = sendJson($error,$msg,$data);
+                    return $result;die(); 
+                }
+                $result = sendJson($error,$msg,$data);
+                return $result;die(); 
+            }
+        }
+        $error = 6;
+        $msg = '参数有误';
+        $result = sendJson($error,$msg,$data);
+        return $result;die(); 
     }
 }
