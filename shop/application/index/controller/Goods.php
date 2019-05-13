@@ -252,7 +252,7 @@ class Goods extends Controller
         $cartobj = new CartModel;
         $usercart = $cartobj->selectInfo('userid',$userid);
         foreach ($usercart as $key => $value) {
-            if ($value['goodsid'] ==$goodsid && $value['attrid']==$attrid&&$value['count']>=$count) {
+            if ($value['goodsid'] ==$goodsid && $value['attrid']==$attrid) {
                 $tmpcount = 0;
                 $tmpcount = $value['count'] - $count;
                 if ($tmpcount===0) {
@@ -276,6 +276,63 @@ class Goods extends Controller
                 $result = sendJson($error,$msg,$data);
                 return $result;die(); 
             }
+        }
+        $error = 6;
+        $msg = '参数有误';
+        $result = sendJson($error,$msg,$data);
+        return $result;die(); 
+    }
+
+    public function cartClear(){
+        $error = 0;
+        $msg = '成功';
+        $data = [];
+        if (!request()->isPost()) {
+            $error=1;
+            $msg = '未接受到POST请求';
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
+        }
+
+        $postdata = input('post.');
+
+        if (empty($postdata['token'])) {
+            $error = 2;
+            $msg = "token为空";
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
+        }
+        $token =$postdata['token'];
+        //判断token
+        $tokenobj = new TokenModel;
+        $result = $tokenobj->tokenChecked($token);
+        if (!$result) {
+            $error = 3;
+            $msg = 'token不存在或过期';
+            $result = sendJson($error,$msg,$data);
+            return $result;die();
+        }
+        $userid = $result['id'];
+
+        $cartobj = new CartModel;
+        $usercart = $cartobj->selectInfo('userid',$userid);
+        if (empty($usercart)) {
+            $error = 4;
+            $msg ='用户没有物品';
+            $result = sendJson($error,$msg,$data);
+            return $result;die(); 
+        }
+        foreach ($usercart as $key => $value) {
+
+            $result = $cartobj->dodelete('id',$value['id']);
+            if (!$result) {
+                $error = 5;
+                $msg ='删除失败';
+                $result = sendJson($error,$msg,$data);
+                return $result;die(); 
+            }
+            $result = sendJson($error,$msg,$data);
+            return $result;die(); 
         }
         $error = 6;
         $msg = '参数有误';
