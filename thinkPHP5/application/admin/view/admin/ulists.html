@@ -1,0 +1,59 @@
+{include file="public/header" /}
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="{:url('index/index')}">首页 </a></li>
+            <li><a href="{:url('message/mlists')}">留言管理</a></li>
+
+            <?php if(session('status') && session('status')>1 ){ ?>
+
+            <li><a href="{:url('classify/clists')}">分类管理</a></li>
+            <li class="active"><a href="{:url('admin/ulists')}">会员管理</a></li>
+
+            <?php } ?>
+          </ul>
+          
+        </div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">用户管理</h1>
+  <div class="table-responsive">
+<div>
+    <a  class="btn btn-default" href="{:url('admin/add')}">新增</a>
+</div>
+
+<table  class="table table-striped"> 
+    <tr>
+        <td>id</td>
+        <td>name</td>
+        <td>phone</td>
+        <td>identity</td>
+        <td>handle</td>
+    </tr>
+ 
+    <tr>
+        {volist name="ulist" id="vo"}
+        <td>{$vo.user_id}</td>
+        <td>{$vo.user_name}</td>
+        <td>{$vo.phone}</td>
+        <td>{$vo.identity}</td>
+
+        <td>
+            <?php if(session('status')>2 && session('status') > $vo['status']){ ?>
+            <a href="{:url('admin/changeStatus')}?aim_status={$vo.status} & aim_id={$vo.user_id} & change= -1 ">降级</a>
+
+            <a href="{:url('admin/changeStatus')}?aim_status={$vo.status} & aim_id={$vo.user_id} & change= 1 ">升级</a>
+            <?php } ?>
+            <a href="{:url('admin/delete')}?aim_status={$vo.status}&aim_id={$vo.user_id}">删除</a>
+        </td>
+    </tr>
+    {/volist}
+    
+
+</table>
+
+
+  </div>
+</div>
+
+{include file="public/footer" /}

@@ -12,17 +12,17 @@
     <title>Dashboard Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="http://test.com/blog/thinkPHP5/public/static/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="http://localhost/thinkPHP5/public/static/admin/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="http://test.com/blog/thinkPHP5/public/static/admin/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="http://localhost/thinkPHP5/public/static/admin/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="http://test.com/blog/thinkPHP5/public/static/admin/dashboard.css" rel="stylesheet">
+    <link href="http://localhost/thinkPHP5/public/static/admin/dashboard.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="http://test.com/blog/thinkPHP5/public/static/admin/ie-emulation-modes-warning.js"></script>
+    <script src="http://localhost/thinkPHP5/public/static/admin/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -65,4 +65,14 @@
       </div>
     </nav>
 
-
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="{:url('index/index')}">会员管理 </a></li>
+            <li><a href="{:url('classify/clists')}">分类管理</a></li>
+            <li><a href="{:url('message/mlists')}">留言管理</a></li>
+            <li><a href="http://v3.bootcss.com/examples/dashboard/#">Export</a></li>
+          </ul>
+          
+        </div>

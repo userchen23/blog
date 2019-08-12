@@ -1,11 +1,11 @@
 <?php
-namespace app\admin\controller;
+namespace app\index\controller;
 
 use think\Controller;
-use app\admin\model\Base;
-use app\admin\model\Message as MsgModel;
-use app\admin\model\User as UserModel;
-use app\admin\model\Classify as ClsfModel;
+use app\index\model\Base;
+use app\index\model\Message as MsgModel;
+use app\index\model\User as UserModel;
+use app\index\model\Classify as ClsfModel;
 /**
  * 
  */
@@ -38,13 +38,13 @@ class Message extends Controller
     public function add(){
         if (!session('name')) { //没登录
              
-            $this->error('请登录', 'User/login');
-            die();
-        }
-        $obj = new ClsfModel;
-        $data = $obj->getLists();
-        $result = $obj->arrChange($data,0,3);
-        $this->assign('clists',$result);
+                $this->error('请登录', 'User/login');
+                die();
+            }
+            $obj = new ClsfModel;
+            $data = $obj->getLists();
+            $result = $obj->arrChange($data,0,3);
+            $this->assign('clists',$result);
         return $this->fetch('add');
     }
     public function save(){
@@ -53,45 +53,47 @@ class Message extends Controller
                 $this->error('请登录', 'User/login');
                 die();
             }
-        if (!request()->isPost()) {
-                $this->error('未接受到信息', 'Index/index');
-                die();
+        if (request()->isPost()) {
+
+            $data=input('post.');
+
+            $code=$data['code'];
+            $cap = '';
+
+            $cap=$this->validate($code,[
+                'captcha|验证码'=>'require|captcha'
+            ]);
+            if ($cap) {
+                $userid = session('id');
+                
+                $end=[
+                    'userid'=>$userid,
+                    'cid'=>$data['cid'],
+                    'content'=>$data['content'],
+                    
+                ];
+                if ($img=\tool\FileHandle::upload()) {
+                    $end['img']=$img;
+                    
+                }
+
+                $obj = new MsgModel;
+                $result = $obj->add($end);
+
+                if ($result) {
+                    $this->success('添加成功', 'Message/mlists');
+                    die();
+                }else{
+                    $this->error('添加失败', 'Message/mlists');
+                    die();
+                }
+
+            }else{
+                $this->error('验证码错误','Message/mlists');
+            }
         }
 
-        $data=input('post.');
 
-        $code=$data['code'];
-        $cap = '';
-
-        $cap=$this->validate($code,[
-            'captcha|验证码'=>'require|captcha'
-        ]);
-        if (!$cap){
-            $this->error('验证码错误','Message/mlists');
-        }
-
-        $userid = session('id');
-        $end=[
-            'userid'=>$userid,
-            'cid'=>$data['cid'],
-            'content'=>$data['content'],
-            
-        ];
-        if ($img=\tool\FileHandle::upload()) {
-            $end['img']=$img;
-            
-        }
-
-        $obj = new MsgModel;
-        $result = $obj->add($end);
-
-        if ($result) {
-            $this->success('添加成功', 'Message/mlists');
-            die();
-        }else{
-            $this->error('添加失败', 'Message/mlists');
-            die();
-        }
     }
 
     public function update(){
@@ -131,7 +133,6 @@ class Message extends Controller
         
         if (request()->isPost()) {
             $data=input('post.');
-
             if (session('id')!=$data['userid']) {
                 $this->error('亲，不能修改别人的信息哦', 'Message/mlists');
                 die();
@@ -172,10 +173,10 @@ class Message extends Controller
         
         if (request()->isGET()) {
             $data=input('get.');
-            if (session('id')!=$data['userid'] && session('status') < 2 ) {
-                $this->error('亲，不能修改别人的信息哦', 'Message/mlists');
-                die();
-            }
+            // if (session('id')!=$data['userid']) {
+            //     $this->error('亲，不能修改别人的信息哦', 'Message/mlists');
+            //     die();
+            // }
             
             $msgid = $data['id'];
             

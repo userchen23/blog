@@ -1,8 +1,8 @@
 <?php
-namespace app\admin\controller;
+namespace app\index\controller;
 
 use think\Controller;
-use app\admin\model\Classify as ClsfModel ;
+use app\index\model\Classify as ClsfModel ;
 
 /**
  * 
@@ -11,13 +11,6 @@ class Classify extends Controller
 {
 
     public function clists(){
-        if (!session('name')) { //没登录
-            $this->error('请登录', 'User/login');
-            die();
-        }
-        if (session('status') < 2 ) {
-            $this->error("非管理员无权进入",'Index/index');
-        }
 
         $objForClassify = new ClsfModel;
         $data = $objForClassify->getLists();
@@ -34,9 +27,6 @@ class Classify extends Controller
             $this->error('请登录', 'User/login');
             die();
         }
-        if (session('status') < 2 ) {
-            $this->error("非管理员无权进入",'Index/index');
-        }
 
         $objForClassify = new ClsfModel;
         $clists = $objForClassify->getLists();
@@ -46,13 +36,9 @@ class Classify extends Controller
     }
     
     public function save(){
-        if (!session('status')) { //没登录 
-
+        if (!session('name')) { //没登录 
             $this->error('请登录', 'User/login');
             die();
-        }
-        if (session('status') < 2 ) {
-            $this->error("非管理员无权进入",'Index/index');
         }
         if (request()->isPost()) {
             $data=input('post.');

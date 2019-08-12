@@ -1,27 +1,11 @@
 {include file="public/header" /}
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li><a href="{:url('index/index')}">首页 </a></li>
-            <li class="active"><a href="{:url('message/mlists')}">留言管理</a></li>
-
-            <?php if(session('status') && session('status')>1 ){ ?>
-
-            <li><a href="{:url('classify/clists')}">分类管理</a></li>
-            <li><a href="{:url('admin/ulists')}">会员管理</a></li>
-
-            <?php } ?>
-          </ul>
-          
-        </div>
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <h1 class="page-header">新增留言</h1>
+    <h1 class="page-header">变更留言</h1>
     <div class="table-responsive">
-        <form action="{:url('message/save')}" method="post" enctype="multipart/form-data">
+        <form action="{:url('message/doupdate')}" method="post" enctype="multipart/form-data">
 
             <div  class="form-group">
-                <label for="exampleInputEmail1">分类：</label>
+                <label for="exampleInputFile">分类：</label>
                     <select class="form-control" name='cid'>
                     <option value="0">请选择</option>
                         {volist name="clists" id='vo'}
@@ -35,15 +19,27 @@
                         {/volist}
                     </select>
             </div>
-            <div>{:captcha_img()}
-                <input type="text" name="code">
 
-            </div>
+            
+
             <div  class="form-group">
-                <label for="exampleInputFile">留言</label>    
-                <textarea class="form-control" rows="3" name="content"></textarea>
+                
+                <input type="file" name="image" /> <br>
+                {if condition="$msg['img'] neq ''"}
+                    <h3>原图片</h3>
+                    <img src="/thinkPHP5/public/{$msg.img}" width="100">
+                {else /} 无图片
+                {/if}<br>
+                <label for="exampleInputFile">留言</label> 
+
+                <textarea class="form-control" rows="3" name="content">{$msg.content}</textarea>
+                
             </div>
-            <input type="file" name="image" /> <br>
+            <div class="form-group">
+
+                <input hidden="hidden" name="id" value="<?php echo $_GET['id'] ?>">
+                <input hidden="hidden" name="userid" value="<?php echo $_GET['userid'] ?>">
+            </div>
             <input type="submit" name="" value="留言" class="btn btn-default">
         </form>
     </div>

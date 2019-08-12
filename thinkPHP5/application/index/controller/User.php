@@ -1,6 +1,6 @@
 <?php
-namespace app\admin\controller;
-use app\admin\model\User as usermodel;
+namespace app\index\controller;
+use app\index\model\User as usermodel;
 use think\Controller;
 use think\Db;
 /**
@@ -22,9 +22,6 @@ class User extends Controller
         //判断是否是表单提交
         if(request()->isPost()){
             $data = input('post.');
-            if(!captcha_check($data['captcha'])){
-                $this->error('验证码错误','User/login');die();
-            };
 
             $obj = new usermodel;
             $info = $obj->findByPhone($data['phone']);
@@ -33,14 +30,10 @@ class User extends Controller
                 $this->error('用户不存在', 'User/login');
 
                 die();
-            }
+            }            
             if ($info['password'] == $data['password']) {
-                if ($info['status'] < 1||$info['status'] > 3) {
-                    $info['status'] = 1;
-                }
                 \think\Session::set('name',$info['username']);
                 \think\Session::set('id',$info['id']);
-                \think\Session::set('status',$info['status']);
                 $this->success('登录成功', 'Index/index');
                 die();
             } else {
@@ -63,9 +56,7 @@ class User extends Controller
     public function doReg(){
         if(request()->isPost()){
             $data = input('post.');
-            if(!captcha_check($data['captcha'])){
-                $this->error('验证码错误','User/login');die();
-            };
+
             $obj = new usermodel;
             $info = $obj->findByPhone($data['phone']);
                         
@@ -74,7 +65,6 @@ class User extends Controller
                 $this->error('该手机号已存在', 'User/register');
                 die();
             }
-            $data['status'] = 1 ;
 
             $result=$obj->register($data);
 

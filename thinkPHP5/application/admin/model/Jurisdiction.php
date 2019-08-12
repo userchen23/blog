@@ -6,8 +6,11 @@ use app\admin\model\Base;
 /**
  * 
  */
-class Message extends Base
+class Jurisdiction extends Base
 {
-    public $table ='message';
+  public $table ='jurisdiction';
+
+  
+
 }
     
